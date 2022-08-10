@@ -17,16 +17,18 @@ const register = async (req, res) => {
         expires: new Date(Date.now() + 900000),
       })
       .json({ successMessage: "user created", user: newUser });
-  } catch (error) {
-    console.log("Error Registering", error);
-    res.status(400).json(error);
+  } catch (err) {
+    console.log("Error Registering", err);
+    res.status(400).json(err);
   }
 };
 
 const login = async (req, res) => {
   const userDocument = await User.findOne({ username: req.body.username });
   if (!userDocument) {
-    res.status(400).json({ error: "invalid username/password" });
+    res
+      .status(400)
+      .json({ error: "Invalid username/password. Please try again." });
   } else {
     try {
       const isPasswordValid = await bcrypt.compare(
@@ -34,7 +36,9 @@ const login = async (req, res) => {
         userDocument.password
       );
       if (!isPasswordValid) {
-        res.status(400).json({ error: "invalid username/password" });
+        res
+          .status(400)
+          .json({ error: "Invalid username/password. Please try again." });
       } else {
         const userToken = jwt.sign(
           {
@@ -53,13 +57,14 @@ const login = async (req, res) => {
       }
     } catch (error) {
       console.log("LOGIN ERROR", error);
-      res.status(400).json({ error: "invalid username/password" });
+      res
+        .status(400)
+        .json({ error: "Invalid username/password. Please try again." });
     }
   }
 };
 
 const logout = (req, res) => {
-  console.log("logged out");
   res.clearCookie("userToken");
   res.json({ successMessage: "User logged out" });
 };

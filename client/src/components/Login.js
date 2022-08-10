@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
@@ -17,6 +17,7 @@ const Login = ({ setIsLoggedIn, user, setUser }) => {
       [e.target.name]: e.target.value,
     });
   };
+  const [errors, setErrors] = useState();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,12 +27,17 @@ const Login = ({ setIsLoggedIn, user, setUser }) => {
         setIsLoggedIn(true);
         navigate(`/${user.username}`);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setErrors(err.response.data.error);
+        console.log(`errors ${errors}`);
+      });
   };
 
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
+        {errors && <Form.Text>{errors}</Form.Text>}
         <FloatingLabel controlId="floatingUsername" label="Username">
           <Form.Control
             type="text"
@@ -43,7 +49,7 @@ const Login = ({ setIsLoggedIn, user, setUser }) => {
         </FloatingLabel>
         <FloatingLabel controlId="floatingPassword" label="Password">
           <Form.Control
-            type="text"
+            type="password"
             name="password"
             placeholder={user.password}
             onChange={handleChange}

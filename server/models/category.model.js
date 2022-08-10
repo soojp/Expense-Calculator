@@ -4,8 +4,9 @@ const CategorySchema = mongoose.Schema(
   {
     category: {
       type: String,
-      required: [true, "category is required"],
-      minLength: [3, "must be 3 characters or longer"],
+      required: [true, "Category is required"],
+      minLength: [3, "Category name must be 3 characters or longer."],
+      unique: true,
     },
     sum: { type: Number },
     rows: [

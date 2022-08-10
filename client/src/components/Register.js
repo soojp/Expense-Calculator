@@ -11,11 +11,15 @@ import Col from "react-bootstrap/Col";
 const Register = ({ setIsLoggedIn, setUser }) => {
   const navigate = useNavigate();
   const [newUser, setNewUser] = useState({
-    username: "",
     email: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [errors, setErrors] = useState();
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
 
   const handleChange = (e) => {
     setNewUser({
@@ -35,21 +39,38 @@ const Register = ({ setIsLoggedIn, setUser }) => {
         setUser({ username: newUser.username, password: newUser.password });
         navigate(`/${newUser.username}`);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(`something went wrong`, err.response);
+        if (
+          err.response.data.code === 11000 &&
+          err.response.data.keyPattern.email === 1
+        ) {
+          setEmailError("Email is already being used. Please login.");
+        } else {
+          setEmailError(null);
+        }
+        if (
+          err.response.data.code === 11000 &&
+          err.response.data.keyPattern.username === 1
+        ) {
+          setUsernameError(
+            "Username is taken. Please choose a different username."
+          );
+        } else {
+          setUsernameError(null);
+        }
+        if (err.response.data.error.errors) {
+          setErrors(err.response.data.error.errors);
+        } else {
+          setErrors(null);
+        }
+      });
   };
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
-        <FloatingLabel controlId="floatingUsername" label="Username">
-          <Form.Control
-            type="text"
-            name="username"
-            placeholder={newUser.username}
-            value={newUser.username}
-            onChange={handleChange}
-            required
-          />
-        </FloatingLabel>
+        {errors && <Form.Text>{errors}</Form.Text>}
+        {emailError && <Form.Text>{emailError}</Form.Text>}
         <FloatingLabel controlId="floatingEmail" label="Email">
           <Form.Control
             type="email"
@@ -60,9 +81,20 @@ const Register = ({ setIsLoggedIn, setUser }) => {
             required
           />
         </FloatingLabel>
-        <FloatingLabel controlId="floatingPassword" label="Password">
+        {usernameError && <Form.Text>{usernameError}</Form.Text>}
+        <FloatingLabel controlId="floatingUsername" label="Username">
           <Form.Control
             type="text"
+            name="username"
+            placeholder={newUser.username}
+            value={newUser.username}
+            onChange={handleChange}
+            required
+          />
+        </FloatingLabel>
+        <FloatingLabel controlId="floatingPassword" label="Password">
+          <Form.Control
+            type="password"
             name="password"
             placeholder={newUser.password}
             value={newUser.password}
@@ -75,7 +107,7 @@ const Register = ({ setIsLoggedIn, setUser }) => {
           label="Confirm Password"
         >
           <Form.Control
-            type="text"
+            type="password"
             name="confirmPassword"
             placeholder={newUser.confirmPassword}
             value={newUser.confirmPassword}

@@ -18,14 +18,14 @@ const AddCategory = ({ user }) => {
       })
       .catch((err) => {
         console.log(`something went wrong`, err.response);
-        if (err.response.data.error?.errors !== undefined) {
+        if (err.response.data.error.errors) {
           setErrors(err.response.data.error.errors);
         } else if (err.response.data) {
           setErrors(err.response.data);
         }
       });
   };
-  
+
   return (
     <Container>
       <Nav
