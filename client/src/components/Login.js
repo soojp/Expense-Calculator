@@ -30,7 +30,6 @@ const Login = ({ setIsLoggedIn, user, setUser }) => {
       .catch((err) => {
         console.log(err);
         setErrors(err.response.data.error);
-        console.log(`errors ${errors}`);
       });
   };
 
