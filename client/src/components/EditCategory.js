@@ -19,7 +19,7 @@ const EditCategory = ({ user }) => {
       .catch((err) => console.log(err));
   }, [id]);
 
-  const submit = (category, setErrors) => {
+  const submit = (category, setErrors, setCategoryError) => {
     axios
       .put(`http://localhost:8000/api/categories/${id}`, category)
       .then((res) => {
@@ -28,6 +28,16 @@ const EditCategory = ({ user }) => {
       })
       .catch((err) => {
         console.log(err.response.data);
+        if (
+          err.response.data.error.code === 11000 &&
+          err.response.data.error.keyPattern.category === 1
+        ) {
+          setCategoryError(
+            "Category already exists. Please add to existing category or rename category name."
+          );
+        } else {
+          setCategoryError(null);
+        }
         if (err.response.data.error.errors) {
           setErrors(err.response.data.error.errors);
         } else {

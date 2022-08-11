@@ -9,6 +9,7 @@ const InputForm = (props) => {
   const { submit, currentCategory, buttonText } = props;
 
   const [sum, setSum] = useState(0);
+  const [categoryError, setCategoryError] = useState("");
   const [errors, setErrors] = useState({});
   const [category, setCategory] = useState(
     currentCategory || {
@@ -64,20 +65,21 @@ const InputForm = (props) => {
         rows,
         sum: 0,
       };
-      submit(payload, setErrors);
+      submit(payload, setErrors, setCategoryError);
     } else {
       let payload = {
         ...category,
         rows,
         sum,
       };
-      submit(payload, setErrors);
+      submit(payload, setErrors, setCategoryError);
     }
   };
 
   return (
     <div>
       <Form onSubmit={handleSubmit}>
+        {categoryError && <Form.Text>{categoryError}</Form.Text>}
         <FloatingLabel controlId="floatingCategory" label="Category">
           <Form.Control
             type="text"
@@ -90,14 +92,6 @@ const InputForm = (props) => {
             required
           />
         </FloatingLabel>
-        {errors.category && (
-          <Form.Text className="text-danger">
-            {errors.category.message}
-          </Form.Text>
-        )}
-        {errors.message && (
-          <Form.Text className="text-danger">{errors.message}</Form.Text>
-        )}
 
         {rows.map((row, index) => (
           <div key={index}>

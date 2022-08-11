@@ -8,7 +8,7 @@ import Container from "react-bootstrap/Container";
 const AddCategory = ({ user }) => {
   const navigate = useNavigate();
 
-  const submit = (category, setErrors) => {
+  const submit = (category, setErrors, setCategoryError) => {
     axios
       .post(`http://localhost:8000/api/categories`, category, {
         withCredentials: true,
@@ -18,6 +18,16 @@ const AddCategory = ({ user }) => {
       })
       .catch((err) => {
         console.log(`something went wrong`, err.response);
+        if (
+          err.response.data.error.code === 11000 &&
+          err.response.data.error.keyPattern.category === 1
+        ) {
+          setCategoryError(
+            "Category already exists. Please add to existing category or rename category name."
+          );
+        } else {
+          setCategoryError(null);
+        }
         if (err.response.data.error.errors) {
           setErrors(err.response.data.error.errors);
         } else if (err.response.data) {
