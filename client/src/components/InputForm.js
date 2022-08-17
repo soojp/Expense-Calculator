@@ -96,7 +96,7 @@ const InputForm = (props) => {
         {rows.map((row, index) => (
           <div key={index}>
             <Form.Text>Item {index + 1}</Form.Text>
-            <Row>
+            <Row className="my-auto">
               <Col>
                 <FloatingLabel controlId="floatingName" label="Name">
                   <Form.Control
@@ -133,7 +133,7 @@ const InputForm = (props) => {
                 )}
               </Col>
 
-              <Col>
+              <Col className="my-auto">
                 {index ? (
                   <Button
                     type="button"
